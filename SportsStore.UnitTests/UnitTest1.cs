@@ -9,6 +9,7 @@ using SportsStore.Domain.Entities;
 using SportsStore.WebUI.Controllers;
 using SportsStore.WebUI.Models;
 using SportsStore.WebUI.HtmlHelpers;
+using Microsoft.CSharp;
 
 namespace SportsStore.UnitTests
 {
@@ -67,6 +68,7 @@ namespace SportsStore.UnitTests
         }
 
         // powyższe - crash na poziomie maszyny. Bez netu nie ogarnę. Wrócić tutaj! Trzeba ogarnąć!!!
+        // ogarnięte
         [TestMethod]
         public void Can_Send_Pagination_View_Model()
         {
@@ -121,6 +123,89 @@ namespace SportsStore.UnitTests
             Assert.AreEqual(result.Length, 2);
             Assert.IsTrue(result[0].Name == "P2" && result[0].Category == "Cat2");
             Assert.IsTrue(result[1].Name == "P4" && result[1].Category == "Cat2");
+        }
+
+        [TestMethod]
+        public void Can_Create_Categories()
+        {
+            // przygotowanie
+            // -tworzenie imitacji repozytorium
+            Mock<IProductRepository> mock = new Mock<IProductRepository>();
+            mock.Setup(m => m.Products).Returns(new Product[]{
+                new Product{ProductID = 1, Name = "P1", Category = "Jabłka"},
+                new Product{ProductID = 2, Name = "P2", Category = "Jabłka"},
+                new Product{ProductID = 3, Name = "P3", Category = "Śliwki"},
+                new Product{ProductID = 4, Name = "P4", Category = "Pomarańcze"},
+            }
+            );
+
+            // przygotowanie - utworzenie kontrolera
+            NavController target = new NavController(mock.Object);
+
+            // działanie - pobranie zbioru kategorii
+            string[] result = ((IEnumerable<string>)target.Menu().Model).ToArray();
+
+            // asercje
+            Assert.AreEqual(result.Length, 3);
+            Assert.AreEqual(result[0], "Jabłka");
+            Assert.AreEqual(result[1], "Pomarańcze");
+            Assert.AreEqual(result[2], "Śliwki");
+        }
+
+        [TestMethod]
+        public void Indicates_Selected_Category()
+        {
+            // przygotowanie
+            // tworzenie repozytorium
+            Mock<IProductRepository> mock = new Mock<IProductRepository>();
+            mock.Setup(m => m.Products).Returns(new Product[]{
+                new Product{ProductID = 1, Name = "P1", Category = "Jabłka"},
+                new Product{ProductID = 4, Name = "P2", Category = "Pomarańcze"},
+            });
+
+            // przygotowanie - utworzenie kontrolera
+            NavController target = new NavController(mock.Object);
+
+            // przygotowanie - definiowanie kategorii do wybrania
+            string categoryToSelect = "Jabłka";
+
+            // działanie
+            string result = target.Menu(categoryToSelect).ViewBag.SelectedCategory;
+
+            // asercje
+            Assert.AreEqual(categoryToSelect, result);
+        }
+
+        [TestMethod]
+        public void Generate_Category_Specific_Product_Count()
+        {
+            // przygotowanie
+            // tworzenie imitacji repozytorium
+            Mock<IProductRepository> mock = new Mock<IProductRepository>();
+            mock.Setup(m => m.Products).Returns(new Product[]{
+                new Product{ProductID = 1, Name = "P1", Category = "Cat1"},
+                new Product{ProductID = 2, Name = "P2", Category = "Cat2"},
+                new Product{ProductID = 3, Name = "P3", Category = "Cat1"},
+                new Product{ProductID = 4, Name = "P4", Category = "Cat2"},
+                new Product{ProductID = 5, Name = "P5", Category = "Cat3"},
+            });
+
+            // przygotowanie
+            // tworzenie kontrolera i ustawienie 3-elementowej strony
+            ProductController target = new ProductController(mock.Object);
+            target.PageSize = 3;
+
+            // działanie - testowanie liczby produktów dla różnych kategorii
+            int res1 = ((ProductsListViewModel)target.List("Cat1").Model).PagingInfo.TotalItems;
+            int res2 = ((ProductsListViewModel)target.List("Cat2").Model).PagingInfo.TotalItems;
+            int res3 = ((ProductsListViewModel)target.List("Cat3").Model).PagingInfo.TotalItems;
+            int resAll = ((ProductsListViewModel)target.List(null).Model).PagingInfo.TotalItems;
+
+            // Assercje
+            Assert.AreEqual(res1, 2);
+            Assert.AreEqual(res2, 2);
+            Assert.AreEqual(res3, 1);
+            Assert.AreEqual(resAll, 5);
         }
     }
 }

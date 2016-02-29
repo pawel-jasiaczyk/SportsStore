@@ -20,3 +20,4 @@ C:\Users\pawel_000\documents\visual studio 2013\Projects\SportsStore\SportsStore
 C:\Users\pawel_000\documents\visual studio 2013\Projects\SportsStore\SportsStore.Domain\bin\Debug\System.Web.WebPages.Razor.xml
 C:\Users\pawel_000\documents\visual studio 2013\Projects\SportsStore\SportsStore.Domain\obj\Debug\SportsStore.Domain.dll
 C:\Users\pawel_000\documents\visual studio 2013\Projects\SportsStore\SportsStore.Domain\obj\Debug\SportsStore.Domain.pdb
+C:\Users\pawel_000\documents\visual studio 2013\Projects\SportsStore\SportsStore.Domain\obj\Debug\SportsStore.Domain.csprojResolveAssemblyReference.cache
