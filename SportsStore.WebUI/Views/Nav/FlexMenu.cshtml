@@ -6,7 +6,7 @@
         horizontal ? "btn-group btn-group-sm btn-group-justified" : null;
 }
 <div class="@wrapperClasses">
-    @Html.ActionLink("Home", "List", "Product",
+    @Html.ActionLink("Home", "List", "Product", null,
     new {@class = horizontal ? "btn btn-default btn-sn" :
         "btn btn-block btn-default btn-lg"
     })
@@ -17,7 +17,7 @@
         {
             controller = "Product",
             action = "List",
-            category = "link",
+            category = link,
             page = 1
         }, new
         {
