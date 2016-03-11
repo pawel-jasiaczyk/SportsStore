@@ -9,7 +9,8 @@ using Moq;
 using SportsStore.Domain.Entities;
 using SportsStore.Domain.Concrete;
 using SportsStore.Domain.Abstract;
-
+using SportsStore.WebUI.Infastructure.Abstract;
+using SportsStore.WebUI.Infastructure.Concrete;
 
 namespace SportsStore.WebUI.Infastructure
 {
@@ -45,6 +46,8 @@ namespace SportsStore.WebUI.Infastructure
 
             kernel.Bind<IOrderProcessor>().To<EmailOrderProcessor>()
                 .WithConstructorArgument("settings", emailSettings);
+
+            kernel.Bind<IAuthProvider>().To<FormsAuthProvider>();
         }
     }
 }
